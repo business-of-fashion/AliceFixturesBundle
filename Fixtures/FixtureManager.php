@@ -308,11 +308,20 @@ class FixtureManager implements FixtureManagerInterface
     protected function initSeedFromSet(FixtureSet $set)
     {
         if (is_numeric($set->getSeed())) {
-            mt_srand($set->getSeed());
+            $this->seedRandom($set->getSeed());
             $this->logDebug('Initialized with seed ' . $set->getSeed());
         } else {
-            mt_srand();
+            $this->seedRandom();
             $this->logDebug('Initialized with random seed');
+        }
+    }
+
+    private function seedRandom($seed = null)
+    {
+        if (PHP_VERSION_ID < 70100) {
+            mt_srand((int) $seed);
+        } else {
+            mt_srand((int) $seed, MT_RAND_PHP);
         }
     }
 
